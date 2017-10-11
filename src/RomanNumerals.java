@@ -10,10 +10,14 @@ There	  were	  certain	  rules	  that	  the	  numerals	  followed	  which	  shou
 • The	'5'	symbols	('V',	'L',	and	'D')	can	never	be	subtracted.	*/
 
 public class RomanNumerals {
-	public int convertToInteger(String romanNum) {
+	private boolean subtracted;
+	private boolean sameSymbols;
+	private boolean mistake;
+	int count;
+	
+	public int convertToInteger(String romanNum) throws RomanNumeralsException {
 
-		// To be Implemented
-		return 0;
+		return getValueOfCombinedSymbol(romanNum);
 
 	}
 
@@ -52,14 +56,12 @@ public class RomanNumerals {
 	public int getValueOfCombinedSymbol(String romanNum) throws RomanNumeralsException {
 		String str = romanNum;
 		char[] charArray = str.toCharArray();
-		boolean subtracted;
-		boolean sameSymbols;
-		boolean mistake;
 
 		int value = 0;
 
 		for (int i = 0; i < charArray.length; i++) {
-			int count = 1;
+
+			count = 1;
 			subtracted = false;
 			sameSymbols = false;
 			mistake = false;
@@ -68,46 +70,16 @@ public class RomanNumerals {
 			if (i + 2 <= (charArray.length)) {
 
 				if (charArray[i] == charArray[i + 1]) {
-
-					while (charArray[i] == charArray[i + count]) {
-						System.out.println("Start Same Symbol");
-						if (repeatableSymbol(charArray[i])) {
-							count++;
-							sameSymbols = true;
-
-							if (count > 3) {
-								mistake = true;
-								System.out.println("mistake at sameSymbols");
-
-								break;
-							}
-
-							if ((count + i) >= charArray.length) {
-								break;
-							}
-						} else {
-							mistake = true;
-							break;
-						}
-
-					}
-					value = valueOf(value, getValueOfsimpleSymbol(charArray[i]), 0, count);
+					value = testSameSymbolsInRow(charArray, i, value);
 					i = i + count - 1;
-					if (i + 1 < charArray.length) {
-						if (!subtractableSymbol(charArray[i + 1])) {
-							mistake = true;
-						}
-					}
 				}
 
 				if (!sameSymbols) {
-					if (subtractable(charArray[i], charArray[i + 1])) {
-						value = valueOf(value, getValueOfsimpleSymbol(charArray[i + 1]),
-								(-getValueOfsimpleSymbol(charArray[i])), 1);						
-						subtracted = true;
+					value = subtractOfSymbols(charArray, i, value);
+					if (subtracted) {
 						i++;
-
 					}
+
 				}
 
 				if (!subtracted && !sameSymbols && !mistake) {
@@ -124,7 +96,53 @@ public class RomanNumerals {
 		return value;
 
 	}
-		
+
+	private int testSameSymbolsInRow(char[] charArray, int i, int value) throws RomanNumeralsException {
+
+		while (charArray[i] == charArray[i + count]) {
+			if (repeatableSymbol(charArray[i])) {
+				count++;
+				sameSymbols = true;
+
+				if (count > 3) {
+					mistake = true;
+					break;
+				}
+
+				if ((count + i) >= charArray.length) {
+					break;
+				}
+			} else {
+				mistake = true;
+				break;
+			}
+
+		}
+		value = valueOf(value, getValueOfsimpleSymbol(charArray[i]), 0, count);
+		i = i + count - 1;
+		if (i + 1 < charArray.length) {
+			if (!subtractableSymbol(charArray[i + 1])) {
+				mistake = true;
+			}
+		}
+
+		return value;
+
+	}
+
+	private int subtractOfSymbols(char[] charArray, int i, int value) throws RomanNumeralsException {
+		if (subtractable(charArray[i], charArray[i + 1])) {
+			value = valueOf(value, getValueOfsimpleSymbol(charArray[i + 1]), (-getValueOfsimpleSymbol(charArray[i])),
+					1);
+			subtracted = true;
+			return value;
+
+		} else {
+			return value;
+		}
+
+	}
+
 	private int valueOf(int value, int number1, int number2, int counter) {
 		int v = value + ((number1 * counter) + number2);
 		return v;

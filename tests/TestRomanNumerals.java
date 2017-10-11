@@ -96,7 +96,16 @@ public class TestRomanNumerals {
 	RomanNumerals number = new RomanNumerals();
 	int numeral = number.getValueOfCombinedSymbol("MMXIV");	
 	assertEquals(2014,numeral);
-} 
+    } 
+	
+	@Test
+	public void combinationMMXIV2() throws RomanNumeralsException {
+	RomanNumerals number =new RomanNumerals() ;
+	int numeral = number.convertToInteger("MMXIV");
+	assertEquals(2014,numeral);
+	}
+	
+	
 	
 	
 	
