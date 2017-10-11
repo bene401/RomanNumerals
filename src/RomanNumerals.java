@@ -11,132 +11,164 @@ There	  were	  certain	  rules	  that	  the	  numerals	  followed	  which	  shou
 
 public class RomanNumerals {
 	public int convertToInteger(String romanNum) {
-		
+
 		// To be Implemented
 		return 0;
-		
+
 	}
-	
+
 	public int getValueOfsimpleSymbol(char romanNum) throws RomanNumeralsException {
-		int value =0;
-		switch (romanNum)
-			{
-			case 'I':
-				value = 1;
-				break;
-			case 'V':
-				value = 5;
-				break;
-			case 'X': 
-				value = 10;
-				break;
-			case 'L':
-				value = 50;
-				break;
-			case 'C':
-				value = 100;
-				break;
-			case 'D':
-				value = 500;
-				break;
-			case 'M':
-				value = 1000;
-				break;
-			default:
-				throw new RomanNumeralsException();
-				
-			}
-		
-		return value;				
+		int value = 0;
+		switch (romanNum) {
+		case 'I':
+			value = 1;
+			break;
+		case 'V':
+			value = 5;
+			break;
+		case 'X':
+			value = 10;
+			break;
+		case 'L':
+			value = 50;
+			break;
+		case 'C':
+			value = 100;
+			break;
+		case 'D':
+			value = 500;
+			break;
+		case 'M':
+			value = 1000;
+			break;
+		default:
+			throw new RomanNumeralsException();
+
+		}
+
+		return value;
 	}
-	
+
 	public int getValueOfCombinedSymbol(String romanNum) throws RomanNumeralsException {
-		String str = romanNum; 
+		String str = romanNum;
 		char[] charArray = str.toCharArray();
 		boolean subtracted;
 		boolean sameSymbols;
-		int value =0;
-		int count =1;
-		for (int i = 0;i<charArray.length; i++) {
+		boolean mistake;
+
+		int value = 0;
+
+		for (int i = 0; i < charArray.length; i++) {
+			int count = 1;
 			subtracted = false;
 			sameSymbols = false;
-			if (i+2 <= (charArray.length)) {
-				if (subtractable(charArray[i],charArray[i+1],count)&& !sameSymbols) {
-					
-					value = value +getValueOfsimpleSymbol(charArray[i+1])-getValueOfsimpleSymbol(charArray[i]);
-					subtracted = true;
-					i++;
-									
-				}
-			
-			
-				if (!subtracted) {
-					if (charArray[i]==charArray[i+1] ) {
+			mistake = false;
+			System.out.println("Start");
+
+			if (i + 2 <= (charArray.length)) {
+
+				if (charArray[i] == charArray[i + 1]) {
+
+					while (charArray[i] == charArray[i + count]) {
+						System.out.println("Start Same Symbol");
 						if (repeatableSymbol(charArray[i])) {
-							count ++;		
+							count++;
 							sameSymbols = true;
+
+							if (count > 3) {
+								mistake = true;
+								System.out.println("mistake at sameSymbols");
+
+								break;
+							}
+
+							if ((count + i) >= charArray.length) {
+								break;
+							}
 						} else {
-							count =4;
+							mistake = true;
+							break;
 						}
-					} else {
-						count = 1;
+
 					}
-					
-					
-					
-					if (count <= 3) {
-						value = (value + getValueOfsimpleSymbol(charArray[i])+getValueOfsimpleSymbol(charArray[i+1]));
-						i++;
-					} else {
-						throw new RomanNumeralsException();
+					value = valueOf(value, getValueOfsimpleSymbol(charArray[i]), 0, count);
+					i = i + count - 1;
+					if (i + 1 < charArray.length) {
+						if (!subtractableSymbol(charArray[i + 1])) {
+							mistake = true;
+						}
 					}
 				}
+
+				if (!sameSymbols) {
+					if (subtractable(charArray[i], charArray[i + 1])) {
+						value = valueOf(value, getValueOfsimpleSymbol(charArray[i + 1]),
+								(-getValueOfsimpleSymbol(charArray[i])), 1);						
+						subtracted = true;
+						i++;
+
+					}
+				}
+
+				if (!subtracted && !sameSymbols && !mistake) {
+					value = valueOf(value, getValueOfsimpleSymbol(charArray[i]), 0, 1);
+					count = 1;
+				} else if (mistake) {
+					throw new RomanNumeralsException();
+				}
+
 			} else {
 				value = value + getValueOfsimpleSymbol(charArray[i]);
 			}
 		}
-		return value;	
-		
+		return value;
+
 	}
-	
+		
+	private int valueOf(int value, int number1, int number2, int counter) {
+		int v = value + ((number1 * counter) + number2);
+		return v;
+
+	}
+
 	private boolean repeatableSymbol(char romanChar) {
-		switch(romanChar) 
-			{
-			case 'I':
-				return true;
-			case 'X':
-			 	return true;
-			case 'C':
-				return true;
-			case 'M':
-				return true;
-			default:
-				return false;
-			}	
-		
+		switch (romanChar) {
+		case 'I':
+			return true;
+		case 'X':
+			return true;
+		case 'C':
+			return true;
+		case 'M':
+			return true;
+		default:
+			return false;
+		}
+
 	}
-	
-	private boolean subtractable(char romanChar1, char romanChar2, int count) throws RomanNumeralsException {
-		
-		if (subtractableSymbol(romanChar1)&& !subtractableSymbol(romanChar2)&&count==1) {
-			if (romanChar2>romanChar1&&romanChar2<=(romanChar1*100)) {
+
+	private boolean subtractable(char romanChar1, char romanChar2) throws RomanNumeralsException {
+
+		if (subtractableSymbol(romanChar1)) {
+			if (romanChar2 > romanChar1 && romanChar2 <= (romanChar1 * 100)) {
 				return true;
 			} else {
 				return false;
 			}
-			
-		}else if (count>1){
-			throw new RomanNumeralsException();
-			
-		}else {
+		}
+
+		/*
+		 * }else if (count>1){ throw new RomanNumeralsException();
+		 * 
+		 * }
+		 */else {
 			return false;
 		}
-		
+
 	}
-	
+
 	private boolean subtractableSymbol(char romanChar) {
-		switch(romanChar)
-		{
+		switch (romanChar) {
 		case 'V':
 			return false;
 		case 'L':
@@ -145,7 +177,7 @@ public class RomanNumerals {
 			return false;
 		default:
 			return true;
-				
+
 		}
 	}
 }

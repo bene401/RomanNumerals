@@ -33,10 +33,12 @@ public class TestRomanNumerals {
 		assertEquals(30,numeral);
 	}
 	
+	
 	@Test (expected = RomanNumeralsException.class)
 	public void valueOfXXXX() throws RomanNumeralsException {
 		RomanNumerals number = new RomanNumerals();
 		int numeral = number.getValueOfCombinedSymbol("XXXX");	
+		assertEquals(30,numeral);
 		
 	}
 	
@@ -61,12 +63,41 @@ public class TestRomanNumerals {
 		assertEquals(4,numeral);
 	}
 	
-	@Test
+	@Test (expected = RomanNumeralsException.class)
 	public void valueOfSubtractIIV() throws RomanNumeralsException {
 		RomanNumerals number = new RomanNumerals();
-		int numeral = number.getValueOfCombinedSymbol("IIV");	
-		assertEquals(4,numeral);
+		int numeral = number.getValueOfCombinedSymbol("IIV");		
 	}
+	
+	@Test 
+	public void combinationXXIV() throws RomanNumeralsException {
+		RomanNumerals number = new RomanNumerals();
+		int numeral = number.getValueOfCombinedSymbol("XXIV");	
+		assertEquals(24,numeral);
+	}
+	
+	@Test 
+	public void combinationMCM() throws RomanNumeralsException {
+		RomanNumerals number = new RomanNumerals();
+		int numeral = number.getValueOfCombinedSymbol("CM");	
+		assertEquals(900,numeral);
+	}
+	
+	
+	@Test
+	public void combinationMCMLXXXIV() throws RomanNumeralsException {
+	RomanNumerals number = new RomanNumerals();
+	int numeral = number.getValueOfCombinedSymbol("MCMLXXXIV");	
+	assertEquals(1984,numeral);
+	}
+	
+	@Test
+	public void combinationMMXIV() throws RomanNumeralsException {
+	RomanNumerals number = new RomanNumerals();
+	int numeral = number.getValueOfCombinedSymbol("MMXIV");	
+	assertEquals(2014,numeral);
+} 
+	
 	
 	
 	
